@@ -1,5 +1,6 @@
 import dotenv
 import os
+import time
 from openai import OpenAI 
 import tiktoken
 
@@ -28,15 +29,33 @@ class ChatBot:
             model="openai/gpt-oss-20b",
             messages=self.messages_history,
             temperature=0.7,
-        )
-        response_text = response.choices[0].message.content
-        self.messages_history.append({"role": "assistant", "content": response_text})
-        
-        self.totol_tokens += response.usage.total_tokens
-        self.input_token += response.usage.prompt_tokens
-        self.output_token += response.usage.completion_tokens
+            stream=True,
 
+        )
+        # response_text = response.choices[0].message.content
+        # self.messages_history.append({"role": "assistant", "content": response_text})
         
+        # self.totol_tokens += response.usage.total_tokens
+        # self.input_token += response.usage.prompt_tokens
+        # self.output_token += response.usage.completion_tokens
+        
+        response_text=""
+        for chunk in response:
+            if chunk.choices:
+                delta = chunk.choices[0].delta.content
+
+                if delta:
+                    print(delta , end="" , flush=True)
+                    response_text += delta
+                    time.sleep(0.05)
+            if chunk.usage:
+                self.totol_tokens += chunk.usage.total_tokens
+                self.input_token += chunk.usage.prompt_tokens
+                self.output_token += chunk.usage.completion_tokens
+
+        print()
+
+        self.messages_history.append({"role": "assistant", "content": response_text})
         return response_text
 
 
@@ -59,8 +78,8 @@ class ChatBot:
                 print("your token is high than your account balance please insert short prompt")
                 break
 
-            bot_answerd = self.bot(user_input)
-            print(bot_answerd)
+            self.bot(user_input)
+            # print(bot_answerd)
 
     def report(self):
         for message in self.messages_history:
