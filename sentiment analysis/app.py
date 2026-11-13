@@ -1,8 +1,10 @@
 import dotenv
 import os
 from openai import OpenAI
+from transformers import pipeline
 
 
+pipe = pipeline("zero-shot-classification", model="typeform/distilbert-base-uncased-mnli")
 dotenv.load_dotenv()
 
 
