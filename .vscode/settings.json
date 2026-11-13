@@ -1,5 +1,5 @@
 {
-  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python-envs.defaultEnvManager": "ms-python.python:pipenv",
   "code-runner.executorMap": {
     "javascript": "node",
     "java": "cd $dir && javac $fileName && java $fileNameWithoutExt",
